@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OOo 2.4 PDF ID WebGPU Solver</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main>
+    <header class="topbar">
+      <h1>OOo 2.4 PDF /ID WebGPU Solver</h1>
+      <span id="webGpuSupport" class="support-status">Checking WebGPU</span>
+    </header>
+
+    <section id="webgpu" class="panel active">
+      <form id="webGpuForm" class="form-grid solver-form">
+        <label>Targets
+          <select id="webGpuTargetPreset">
+            <option value="bitcoin-2" selected>Bitcoin PDFs - 2 PDFs</option>
+            <option value="bitcoin-1">Bitcoin PDF - 1 PDF</option>
+            <option value="xp-2">XP test - 2 PDFs</option>
+            <option value="xp-1">XP test - 1 PDF</option>
+            <option value="vista-2">Vista test - 2 PDFs</option>
+            <option value="vista-1">Vista test - 1 PDF</option>
+            <option value="linux-2">Linux test - 2 PDFs</option>
+            <option value="linux-1">Linux test - 1 PDF</option>
+            <option value="custom">Upload PDFs</option>
+          </select>
+        </label>
+        <label>Mode
+          <select id="webGpuMode">
+            <option value="xp" selected>Windows XP short path</option>
+            <option value="vista">Windows Vista user path</option>
+            <option value="linux">Linux /tmp</option>
+          </select>
+        </label>
+        <label>Candidate source
+          <select id="webGpuCandidateSource">
+            <option value="field" selected>Wordlist field</option>
+            <option value="file">Wordlist file</option>
+            <option value="mask">Mask generator</option>
+          </select>
+        </label>
+        <label>Milliseconds
+          <select id="webGpuMillisSet">
+            <option value="xp64" selected>xp64</option>
+            <option value="all">all</option>
+            <option value="custom">custom</option>
+          </select>
+        </label>
+        <label>Custom milliseconds<input id="webGpuMillisCustom" placeholder="0-999,125,250"></label>
+        <label>Delta range<input id="webGpuDeltas" value="0:384" spellcheck="false"></label>
+        <label>Sessions<input id="webGpuSessions" value="0:17575" spellcheck="false"></label>
+        <label>Second offsets<input id="webGpuSecondOffsets" value="0:0" spellcheck="false"></label>
+        <label>8.3 variants<input id="webGpuAliasMax" type="number" min="1" max="9" value="1"></label>
+        <label>Names per batch<input id="webGpuChunkSize" type="number" min="1" max="8192" value="1024"></label>
+        <label class="wide custom-pdf-field" hidden>Upload PDFs<input id="webGpuPdfs" type="file" accept="application/pdf,.pdf" multiple></label>
+        <label class="wide candidate-source-file" hidden>Wordlist file<input id="webGpuWordlistFile" type="file" accept=".txt,.lst,.dic,text/plain"></label>
+
+        <fieldset class="wide generator-box">
+          <legend>Masks and variants</legend>
+          <div class="generator-grid">
+            <label class="candidate-source-mask">Mask<input id="webGpuMask" value="?l?l?l?l?l" spellcheck="false"></label>
+            <label class="mask-option">?1<input id="webGpuCharset1" placeholder="XP-valid chars"></label>
+            <label class="mask-option">?2<input id="webGpuCharset2" placeholder="XP-valid, no dot"></label>
+            <label class="mask-option">?3<input id="webGpuCharset3" placeholder="custom chars"></label>
+            <label class="mask-option">?4<input id="webGpuCharset4" placeholder="custom chars"></label>
+            <label>Limit<input id="webGpuGenerateLimit" type="number" min="1" max="10000000" value="200000"></label>
+          </div>
+          <div class="generator-grid generator-grid-secondary">
+            <label class="wordlist-transform-option">Wordlist masks
+              <select id="webGpuWordTransform">
+                <option value="none">none</option>
+                <option value="suffix">append suffix mask</option>
+                <option value="prefix">prepend prefix mask</option>
+                <option value="both">prepend prefix and append suffix</option>
+              </select>
+            </label>
+            <label class="prefix-mask-option">Prefix mask<input id="webGpuPrefixMask" placeholder="?u or user-"></label>
+            <label class="suffix-mask-option">Suffix mask<input id="webGpuSuffixMask" placeholder="?d?d or _old"></label>
+            <label class="wordlist-transform-option">Name variants
+              <select id="webGpuNameVariants">
+                <option value="basic" selected>basic</option>
+                <option value="off">off</option>
+                <option value="aggressive">aggressive</option>
+              </select>
+            </label>
+          </div>
+          <div class="button-row candidate-source-mask">
+            <button id="webGpuPreviewGenerated" type="button">Preview Mask</button>
+            <button id="webGpuUseGenerated" type="button">Use Generated</button>
+            <span id="webGpuGeneratorStats" class="generator-stats">Idle</span>
+          </div>
+          <pre id="webGpuGeneratorPreview" class="generator-preview"></pre>
+        </fieldset>
+
+        <div class="wide diagnostic-box">
+          <div class="button-row">
+            <button id="webGpuDiagnostics" type="button">Diagnostics</button>
+            <button id="webGpuProfileGenerator" type="button">Profile Generator</button>
+            <span id="webGpuDiagnosticSummary" class="generator-stats">Not checked</span>
+          </div>
+        </div>
+
+        <label class="wide candidate-source-field">Wordlist field<textarea id="webGpuUsernames" spellcheck="false">satoshi
+Satoshi</textarea></label>
+        <div class="button-row wide candidate-source-field">
+          <button id="webGpuPreviewField" type="button">Preview Transform</button>
+          <button id="webGpuPrepareUsernames" type="button">Map + Dedupe</button>
+          <span id="webGpuPrepareStats" class="generator-stats">Uses the selected variants, masks, and 8.3 limit.</span>
+        </div>
+        <div class="button-row wide">
+          <button id="webGpuStart" type="submit">Start</button>
+          <button id="webGpuAbort" type="button" disabled>Abort</button>
+        </div>
+      </form>
+
+      <div class="meter"><div id="webGpuBar"></div></div>
+      <div class="readout"><span id="webGpuState">Idle</span><span id="webGpuRate"></span></div>
+      <pre id="webGpuLog" class="solver-log"></pre>
+    </section>
+  </main>
+
+  <script type="module" src="./standalone.js"></script>
+</body>
+</html>
