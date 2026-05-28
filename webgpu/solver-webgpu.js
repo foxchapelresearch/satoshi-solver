@@ -382,7 +382,8 @@ fn step_h(a: u32, b: u32, c: u32, d: u32, x: u32, k: u32, s: u32) -> u32 { retur
 fn step_i(a: u32, b: u32, c: u32, d: u32, x: u32, k: u32, s: u32) -> u32 { return rotl32(a + md5_i(b, c, d) + x + k, s) + b; }
 
 fn word_put_byte(words: ptr<function, array<u32, ${messageWords}>>, pos: u32, value: u32) {
-  (*words)[pos >> 2u] = (*words)[pos >> 2u] | ((value & 255u) << ((pos & 3u) * 8u));
+  let shift = (pos & 3u) * 8u;
+  (*words)[pos >> 2u] = ((*words)[pos >> 2u] & ~(255u << shift)) | ((value & 255u) << shift);
 }
 
 fn shared_put_byte(pos: u32, value: u32) {
